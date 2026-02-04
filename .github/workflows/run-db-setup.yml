@@ -1,0 +1,31 @@
+name: Run DB migrations and seed
+
+on:
+  workflow_dispatch:
+
+jobs:
+  db-setup:
+    name: Run migrations & seed
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run migrations
+        run: npm run db:push
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Run seed script
+        run: npm run seed
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
